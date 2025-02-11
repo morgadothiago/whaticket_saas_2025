@@ -23,7 +23,7 @@ export function PersonalInfoStep({ form, onNext }: PersonalInfoStepProps) {
         label="Email"
         placeholder="seu@email.com"
         {...register('email')}
-        error={errors.email?.message}
+
       />
       <Button
         className="w-full"

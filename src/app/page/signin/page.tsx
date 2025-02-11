@@ -56,15 +56,16 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section - hide on mobile */}
+      <div className="hidden lg:flex lg:w-1/2 lg:fixed lg:left-0 lg:h-full bg-muted">
         <div className="absolute inset-0 bg-zinc-900" />
-        <div className="relative z-20 flex items-center text-lg font-medium">
-          <Icons.logo className="mr-2 h-6 w-6" />
-          Your App Name
-        </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
+        <div className="relative z-20 flex flex-col justify-between w-full p-8">
+          <div className="flex items-center text-lg font-medium text-white">
+            <Icons.logo className="mr-2 h-6 w-6" />
+            Your App Name
+          </div>
+          <blockquote className="space-y-2 text-white">
             <p className="text-lg">
               &ldquo;This app has saved me countless hours of work and helped me deliver stunning designs to my clients faster than ever before.&rdquo;
             </p>
@@ -72,9 +73,11 @@ export default function SignInPage() {
           </blockquote>
         </div>
       </div>
-      <div className="lg:p-8">
-        <Card className="mx-auto max-w-sm">
-          <CardHeader className="space-y-1">
+
+      {/* Form Section - full width on mobile, half width on desktop */}
+      <div className="flex-1 flex items-center justify-center p-4 lg:ml-[50%]">
+        <Card className="w-full max-w-sm mx-auto">
+          <CardHeader className="space-y-1 px-6 py-4">
             <h1 className="text-2xl font-bold tracking-tight">Entrar na conta</h1>
             <p className="text-sm text-muted-foreground">
               Digite suas credenciais para acessar sua conta

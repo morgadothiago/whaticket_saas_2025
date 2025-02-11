@@ -49,7 +49,7 @@ export default function SignUpPage() {
         richColors: true,
       });
 
-      router.push('/page/signin');
+      router.push('/page/Home');
     } catch (error) {
       toast.error('Erro ao criar conta. Tente novamente.');
     } finally {
@@ -71,26 +71,27 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section - hide on mobile */}
+      <div className="hidden lg:flex lg:w-1/2 lg:fixed lg:left-0 lg:h-full bg-muted">
         <div className="absolute inset-0 bg-gradient-to-r from-zinc-600 bg-zinc-900" />
-        <div className="relative z-20 flex items-center text-lg font-medium">
-          <h1 className="text-4xl font-extrabold">Crie sua conta</h1>
-        </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
+        <div className="relative z-20 flex flex-col justify-between w-full p-8">
+          <h1 className="text-4xl font-extrabold text-white">Crie sua conta</h1>
+          <blockquote className="space-y-2 text-white">
             <p className="text-lg">
               &ldquo;Junte-se a nós e descubra todas as possibilidades que temos para oferecer.&rdquo;
             </p>
           </blockquote>
         </div>
       </div>
-      <div className="lg:p-8">
-        <Card className="mx-auto max-w-sm shadow-lg">
-          <CardHeader>
+
+      {/* Form Section - full width on mobile, half width on desktop */}
+      <div className="flex-1 flex items-center justify-center p-4 lg:ml-[50%]">
+        <Card className="w-full max-w-sm mx-auto shadow-lg">
+          <CardHeader className="px-6 py-4">
             <StepIndicator currentStep={currentStep} totalSteps={3} />
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-6">
             {renderStep()}
           </CardContent>
         </Card>
