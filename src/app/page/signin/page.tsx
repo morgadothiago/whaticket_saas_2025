@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { useAuth } from '@/app/context/authContext'
 import { useRouter } from 'next/navigation'
 import { Icons } from '@/components/ui/icons'
+import Link from 'next/link'
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -117,19 +118,19 @@ export default function SignInPage() {
               <span className="mr-1 hidden sm:inline-block">
                 Não tem uma conta?
               </span>
-              <a
+              <Link
                 href="/page/signup"
                 className="text-primary underline-offset-4 transition-colors hover:underline"
               >
                 Criar conta
-              </a>
+              </Link>
             </div>
-            <a
-              href="/forgot-password"
+            <Link
+              href="/page/forgot-password"
               className="text-sm text-primary underline-offset-4 transition-colors hover:underline"
             >
               Esqueceu a senha?
-            </a>
+            </Link>
           </CardFooter>
         </Card>
       </div>
