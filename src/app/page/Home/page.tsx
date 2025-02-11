@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { useAuth } from '@/app/context/authContext'
 import { useRouter } from 'next/navigation'
 
-export default function page() {
+export default function HomePage() {
   const { user } = useAuth();
   const router = useRouter();
 

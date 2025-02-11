@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 const LandingPage = () => {
   return (
@@ -15,10 +16,10 @@ const LandingPage = () => {
           <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Pronto para começar?</h2>
           <div className="space-y-4">
             <Button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200" asChild>
-              <a href="/page/signup">Criar Conta</a>
+              <Link href="/page/signup">Criar Conta</Link>
             </Button>
             <Button variant="outline" className="w-full py-3 rounded-lg" asChild>
-              <a href="/page/signin">Já tenho uma conta</a>
+              <Link href="/page/signin">Já tenho uma conta</Link>
             </Button>
           </div>
         </Card>
