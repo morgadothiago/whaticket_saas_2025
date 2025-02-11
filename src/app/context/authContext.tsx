@@ -2,10 +2,11 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import type { SigninTypes } from '@/app/types/SigninTypes';
+import { mockUsers } from '../mock/user';
 
 interface AuthContextType {
   user: SigninTypes | null;
-  login: (data: SigninTypes) => Promise<boolean>;
+  login: (data: SigninTypes) => Promise<SigninTypes | null>;
   logout: () => void;
 }
 
@@ -14,34 +15,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<SigninTypes | null>(null);
 
-  const login = async (data: SigninTypes): Promise<boolean> => {
-    const mockedUsers = [
-      {
-        email: 'admin@example.com',
-        password: 'admin123',
-        role: 'admin',
-      },
-      {
-        email: 'user@example.com',
-        password: 'user123',
-        role: 'user',
-      },
-      {
-        email: 'superadmin@example.com',
-        password: 'superadmin123',
-        role: 'superadmin',
-      },
-    ];
-
-    const foundUser = mockedUsers.find(user => user.email === data.email && user.password === data.password);
+  const login = async (data: SigninTypes): Promise<SigninTypes | null> => {
+    const foundUser = mockUsers.find(user => user.email === data.email && user.password === data.password);
     if (foundUser) {
-      setUser(foundUser);
-      console.log('Login successful:', foundUser);
-      return true;
-    } else {
-      console.warn('Login failed: Invalid email or password');
-      return false;
+      const userInfo = {
+        id: foundUser.id,
+        fullName: foundUser.fullName,
+        email: foundUser.email,
+        role: foundUser.role,
+        user: foundUser.user,
+        status: foundUser.role === 'admin' ? foundUser.status : undefined,
+      };
+      setUser(userInfo);
+      console.log('Login successful:', userInfo);
+      return userInfo;
     }
+    return null;
   };
 
   const logout = () => {

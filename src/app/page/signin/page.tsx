@@ -13,6 +13,7 @@ import { useAuth } from '@/app/context/authContext'
 import { useRouter } from 'next/navigation'
 import { Icons } from '@/components/ui/icons'
 import Link from 'next/link'
+import { SignInFormData } from '@/app/types/SigninTypes'
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -22,31 +23,24 @@ export default function SignInPage() {
     password: yup.string().required('Senha é obrigatória')
   })
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<SigninTypes>({
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<SignInFormData>({
     resolver: yupResolver(schema)
   })
 
   const router = useRouter()
-  const { login } = useAuth()
+  const { login, user } = useAuth()
 
-  const onSubmit: SubmitHandler<SigninTypes> = async (data) => {
+  const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
     try {
       setIsLoading(true)
       const loginResult = await login(data)
 
       if (loginResult) {
-        toast.success('Login realizado com sucesso!', {
-          position: 'top-right',
-          richColors: true,
-          duration: 2000,
-        })
-        router.push('/page/Home')
+        toast.success('Login realizado com sucesso!')
+        const redirectPath = loginResult.role === 'superadmin' ? '/page/admin' : '/page/Home';
+        router.push(redirectPath);
       } else {
-        toast.error('Credenciais inválidas', {
-          position: 'top-right',
-          richColors: true,
-          duration: 2000,
-        })
+        toast.error('Credenciais inválidas')
       }
     } catch (error) {
       toast.error('Erro ao fazer login')
@@ -91,7 +85,7 @@ export default function SignInPage() {
                     label="Email"
                     placeholder="nome@exemplo.com"
                     {...register('email')}
-
+                    error={errors.email?.message}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -101,6 +95,7 @@ export default function SignInPage() {
                     placeholder="Digite sua senha"
                     {...register('password')}
                     password={true}
+                    error={errors.password?.message}
                   />
                 </div>
                 <Button
