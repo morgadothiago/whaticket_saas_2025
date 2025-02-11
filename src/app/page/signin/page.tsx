@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { toast } from 'sonner'
 import { useAuth } from '@/app/context/authContext'
+import { useRouter } from 'next/navigation'
 
 export default function page() {
 
@@ -19,12 +20,39 @@ export default function page() {
   const { register, handleSubmit, formState: { errors } } = useForm<SigninTypes>({
     resolver: yupResolver(schema)
   })
+  const router = useRouter();
 
   const { login } = useAuth();
 
   const onSubmit: SubmitHandler<SigninTypes> = async (data) => {
-    login(data);
-    console.log('User data:',);
+    const loginResult = await login(data);
+
+    if (loginResult) {
+      toast.success('Login successful! Redirecting to home...', {
+        duration: 2000,
+        position: 'top-right',
+        style: {
+          background: '#4caf50',
+          color: '#fff',
+          border: '1px solid #388e3c',
+          padding: '10px',
+          borderRadius: '5px',
+        }
+      });
+      router.push('/page/Home');
+    } else {
+      toast.error('Login failed. Please check your credentials and try again.', {
+        duration: 2000,
+        position: 'top-right',
+        style: {
+          background: '#ff4d4d',
+          color: '#fff',
+          border: '1px solid #ff0000',
+          padding: '10px',
+          borderRadius: '5px',
+        }
+      });
+    }
   }
 
   return (

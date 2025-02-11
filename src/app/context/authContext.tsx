@@ -5,7 +5,7 @@ import type { SigninTypes } from '@/app/types/SigninTypes';
 
 interface AuthContextType {
   user: SigninTypes | null;
-  login: (data: SigninTypes) => void;
+  login: (data: SigninTypes) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<SigninTypes | null>(null);
 
-  const login = (data: SigninTypes) => {
+  const login = async (data: SigninTypes): Promise<boolean> => {
     const mockedUsers = [
       {
         email: 'admin@example.com',
@@ -32,8 +32,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (foundUser) {
       setUser(foundUser);
       console.log('Login successful:', foundUser);
+      return true;
     } else {
       console.warn('Login failed: Invalid email or password');
+      return false;
     }
   };
 
