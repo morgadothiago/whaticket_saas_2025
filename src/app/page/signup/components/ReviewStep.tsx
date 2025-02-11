@@ -1,15 +1,16 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { SignUpFormData } from '@/app/types/SignUpTypes';
 
 interface ReviewStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<SignUpFormData>;
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit: (data: SignUpFormData) => Promise<void>;
   isLoading: boolean;
 }
 
 export function ReviewStep({ form, onBack, onSubmit, isLoading }: ReviewStepProps) {
-  const { getValues } = form;
+  const { getValues, handleSubmit } = form;
   const values = getValues();
 
   return (
@@ -33,7 +34,7 @@ export function ReviewStep({ form, onBack, onSubmit, isLoading }: ReviewStepProp
         </Button>
         <Button
           className="w-full"
-          onClick={onSubmit}
+          onClick={handleSubmit(onSubmit)}
           disabled={isLoading}
         >
           {isLoading ? 'Criando conta...' : 'Criar conta'}

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -23,11 +23,18 @@ const schema = yup.object().shape({
     .required('Confirmação de senha é obrigatória'),
 });
 
+interface SignUpFormData {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export default function SignUpPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const form = useForm({
+  const form = useForm<SignUpFormData>({
     resolver: yupResolver(schema),
     mode: 'onChange'
   });
@@ -35,21 +42,15 @@ export default function SignUpPage() {
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const prevStep = () => setCurrentStep(prev => prev - 1);
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: SignUpFormData) => {
     try {
       setIsLoading(true);
-      const values = form.getValues();
-      console.log('Form submitted:', values);
+      console.log('Form submitted:', data);
 
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      toast.success('Conta criada com sucesso!', {
-        position: 'top-right',
-        richColors: true,
-      });
-
-      router.push('/page/Home');
+      toast.success('Conta criada com sucesso!');
+      router.push('/page/signin');
     } catch (error) {
       toast.error('Erro ao criar conta. Tente novamente.');
     } finally {
@@ -92,7 +93,9 @@ export default function SignUpPage() {
             <StepIndicator currentStep={currentStep} totalSteps={3} />
           </CardHeader>
           <CardContent className="px-6">
-            {renderStep()}
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              {renderStep()}
+            </form>
           </CardContent>
         </Card>
       </div>
