@@ -97,7 +97,7 @@ export default function SignInPage() {
                     type="password"
                     placeholder="Digite sua senha"
                     {...register('password')}
-
+                    password={true}
                   />
                 </div>
                 <Button
