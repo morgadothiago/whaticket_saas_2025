@@ -18,9 +18,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await api.post('/auth/login', data);
 
+
+      console.log('response.data', response.data)
       if (response?.data) {
         saveUser(response.data.user);
         saveToken(response.data.token);
+        setUser(response.data.user);
+
+
         return response.data;
       }
       return null;
@@ -33,11 +38,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const saveToken = (token: string) => {
     localStorage.setItem('token', token);
     setToken(token);
+
   }
 
   const saveUser = (user: User) => {
     localStorage.setItem('user', JSON.stringify(user));
     setUser(user);
+
   }
 
   const logout = () => {
@@ -54,11 +61,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token && user) {
       setToken(token);
       setUser(JSON.parse(user));
+
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, token }}>
       {children}
     </AuthContext.Provider>
   );

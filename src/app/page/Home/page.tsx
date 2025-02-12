@@ -5,12 +5,13 @@ import { useAuth } from '@/app/context/authContext'
 import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   return (
     <div>
       <h1>Home, {user?.role}</h1>
       <p>{user?.email}</p>
       <p>{user?.token}</p>
+      <p>Aqui o token: {token}</p>
       {/* 
         <menu>
           <li>

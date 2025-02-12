@@ -1,6 +1,6 @@
 'use client'
-
-import { useAuth } from '@/app/context/authContext'
+import SlideMenu from '@/app/components/SlideMenu';
+import { useAuth } from '@/app/context/authContext';
 import { redirect } from 'next/navigation'
 
 export default function ProtectedLayout({
@@ -8,11 +8,18 @@ export default function ProtectedLayout({
 }: {
   children: React.ReactNode
 }) {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const { token } = useAuth();
 
-  if (!token) {
-    redirect('/page/signin')
+  const storedToken = localStorage.getItem('token');
+  if (!token && !storedToken) {
+    redirect('/page/signin');
   }
 
-  return <>{children}</>
+  return <>
+    <div>
+      <SlideMenu />
+
+      {children}
+    </div>
+  </>
 } 
