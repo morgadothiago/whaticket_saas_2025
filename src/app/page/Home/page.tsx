@@ -11,7 +11,7 @@ export default function HomePage() {
       <h1>Home, {user?.role}</h1>
       <p>{user?.email}</p>
       <p>{user?.token}</p>
-      <p>Aqui o token: {token}</p>
+      x
       {/* 
         <menu>
           <li>
