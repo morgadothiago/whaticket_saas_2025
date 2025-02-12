@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import React from 'react'
-import type { SigninTypes } from '@/app/types/SigninTypes'
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { toast } from 'sonner'
@@ -28,19 +27,16 @@ export default function SignInPage() {
   })
 
   const router = useRouter()
-  const { login, user } = useAuth()
+  const { login } = useAuth()
 
   const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
     try {
       setIsLoading(true)
-      const loginResult = await login(data)
+      const response = await login(data)
 
-      if (loginResult) {
+      if (response) {
         toast.success('Login realizado com sucesso!')
-        const redirectPath = loginResult.role === 'superadmin' ? '/page/admin' : '/page/Home';
-        router.push(redirectPath);
-      } else {
-        toast.error('Credenciais inválidas')
+        router.push('/page/Home')
       }
     } catch (error) {
       toast.error('Erro ao fazer login')
