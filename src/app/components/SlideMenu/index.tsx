@@ -22,3 +22,4 @@ export default function SlideMenu({ isOpen, onOpenChange }: SlideMenuProps) {
       <DesktopMenu />
     </>
   )
+}

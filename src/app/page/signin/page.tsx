@@ -1,132 +1,152 @@
 'use client'
 
-import TextInput from '@/app/components/Input'
-import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import React from 'react'
-import { yupResolver } from "@hookform/resolvers/yup"
-import * as yup from "yup"
-import { toast } from 'sonner'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useAuth } from '@/app/context/authContext'
 import { useRouter } from 'next/navigation'
-import { Icons } from '@/components/ui/icons'
-import Link from 'next/link'
-import { SignInFormData } from '@/app/types/SigninTypes'
+import Link from "next/link"
+import { LogIn } from "lucide-react"
+import { toast } from "sonner"
 
-export default function SignInPage() {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+const formSchema = z.object({
+  email: z.string().email({
+    message: "Email inválido.",
+  }),
+  password: z.string().min(6, {
+    message: "Senha deve ter no mínimo 6 caracteres.",
+  }),
+})
 
-  const schema = yup.object().shape({
-    email: yup.string().email('Email inválido').required('Email é obrigatório'),
-    password: yup.string().required('Senha é obrigatória')
-  })
-
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<SignInFormData>({
-    resolver: yupResolver(schema)
-  })
-
-  const router = useRouter()
+export default function SignIn() {
   const { login } = useAuth()
+  const router = useRouter()
 
-  const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      setIsLoading(true)
-      const response = await login(data)
+      await login(values)
+      router.push('/page/Home')
+      toast.success('Login realizado com sucesso', {
+        position: 'top-right',
+        duration: 5000,
+        richColors: true,
+        description: 'Você foi redirecionado para a página inicial',
+        icon: '🔑',
 
-      if (response) {
-        toast.success('Login realizado com sucesso!')
-        router.push('/page/Home')
-      }
+
+      })
     } catch (error) {
-      toast.error('Erro ao fazer login')
-    } finally {
-      setIsLoading(false)
+      console.error(error)
+      toast.error('Erro ao realizar login. Tente novamente.', {
+        position: 'top-right',
+        duration: 5000,
+        richColors: true,
+        icon: '❌',
+      })
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Hero Section - hide on mobile */}
-      <div className="hidden lg:flex lg:w-1/2 lg:fixed lg:left-0 lg:h-full bg-muted">
-        <div className="absolute inset-0 bg-zinc-900" />
-        <div className="relative z-20 flex flex-col justify-between w-full p-8">
-          <div className="flex items-center text-lg font-medium text-white">
-            <Icons.logo className="mr-2 h-6 w-6" />
-            Your App Name
+    <div className="min-h-screen flex flex-col justify-center bg-gray-50">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="flex justify-center">
+          <div className="p-3 bg-blue-50 rounded-2xl">
+            <LogIn className="h-12 w-12 text-blue-600" />
           </div>
-          <blockquote className="space-y-2 text-white">
-            <p className="text-lg">
-              &ldquo;This app has saved me countless hours of work and helped me deliver stunning designs to my clients faster than ever before.&rdquo;
-            </p>
-            <footer className="text-sm">Sofia Davis</footer>
-          </blockquote>
         </div>
+        <h2 className="mt-6 text-center text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+          Fazer login
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Entre com suas credenciais para acessar sua conta
+        </p>
       </div>
 
-      {/* Form Section - full width on mobile, half width on desktop */}
-      <div className="flex-1 flex items-center justify-center p-4 lg:ml-[50%]">
-        <Card className="w-full max-w-sm mx-auto">
-          <CardHeader className="space-y-1 px-6 py-4">
-            <h1 className="text-2xl font-bold tracking-tight">Entrar na conta</h1>
-            <p className="text-sm text-muted-foreground">
-              Digite suas credenciais para acessar sua conta
-            </p>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <TextInput
-                    label="Email"
-                    placeholder="nome@exemplo.com"
-                    {...register('email')}
-                    error={errors.email?.message}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <TextInput
-                    label="Senha"
-                    type="password"
-                    placeholder="Digite sua senha"
-                    {...register('password')}
-                    password={true}
-                    error={errors.password?.message}
-                  />
-                </div>
-                <Button
-                  className="w-full"
-                  type="submit"
-                  disabled={isLoading || !watch('email') || !watch('password')}
-                >
-                  {isLoading && (
-                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  {isLoading ? 'Entrando...' : 'Entrar'}
-                </Button>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
+          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <div className="mt-1">
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  {...form.register("email")}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+                {form.formState.errors.email && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {form.formState.errors.email.message}
+                  </p>
+                )}
               </div>
-            </form>
-          </CardContent>
-          <CardFooter className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-sm text-muted-foreground">
-              <span className="mr-1 hidden sm:inline-block">
-                Não tem uma conta?
-              </span>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Senha
+              </label>
+              <div className="mt-1">
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••"
+                  {...form.register("password")}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+                {form.formState.errors.password && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {form.formState.errors.password.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="text-sm">
+                <Link
+                  href="/page/forgot-password"
+                  className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+                >
+                  Esqueceu sua senha?
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <Button
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              >
+                Entrar
+              </Button>
+            </div>
+          </form>
+
+          <div className="mt-6">
+            <p className="text-center text-sm text-gray-600">
+              Não tem uma conta?{' '}
               <Link
                 href="/page/signup"
-                className="text-primary underline-offset-4 transition-colors hover:underline"
+                className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
               >
-                Criar conta
+                Registre-se
               </Link>
-            </div>
-            <Link
-              href="/page/forgot-password"
-              className="text-sm text-primary underline-offset-4 transition-colors hover:underline"
-            >
-              Esqueceu a senha?
-            </Link>
-          </CardFooter>
-        </Card>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -1,44 +1,121 @@
-import { Home, Settings, Users, BarChart, FileText, Calendar } from "lucide-react"
+import { Home, Settings, Users, BarChart, FileText, Calendar, MessageCircle, Tag, Phone, Clock, HelpCircle, Megaphone, Info, Brain, Link2, Database, List, MessageSquare, UserCog, Terminal, DollarSign } from "lucide-react"
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/app/context/authContext'
 
-const menuItems = [
+const menuItemsGeral = [
   {
     title: 'Dashboard',
     icon: <Home className="h-5 w-5" />,
     href: '/page/Home',
   },
   {
-    title: 'Analytics',
+    title: 'Atendimentos',
+    icon: <MessageCircle className="h-5 w-5" />,
+    href: '/page/atendimentos',
+  },
+  {
+    title: 'Kanban',
     icon: <BarChart className="h-5 w-5" />,
-    href: '/page/analytics',
+    href: '/page/kanban',
   },
   {
-    title: 'Relatórios',
+    title: 'Resposta Rápida',
+    icon: <MessageSquare className="h-5 w-5" />,
+    href: '/page/resposta-rapida',
+  },
+  {
+    title: 'Tarefas',
     icon: <FileText className="h-5 w-5" />,
-    href: '/page/reports',
+    href: '/page/tarefas',
   },
   {
-    title: 'Agenda',
-    icon: <Calendar className="h-5 w-5" />,
-    href: '/page/calendar',
+    title: 'Contatos',
+    icon: <Phone className="h-5 w-5" />,
+    href: '/page/contatos',
+  },
+  {
+    title: 'Agendamentos',
+    icon: <Clock className="h-5 w-5" />,
+    href: '/page/agendamentos',
+  },
+  {
+    title: 'Tags',
+    icon: <Tag className="h-5 w-5" />,
+    href: '/page/tags',
+  },
+  {
+    title: 'Chat Interno',
+    icon: <MessageCircle className="h-5 w-5" />,
+    href: '/page/chat-interno',
+  },
+  {
+    title: 'Ajuda',
+    icon: <HelpCircle className="h-5 w-5" />,
+    href: '/page/ajuda',
+  },
+]
+
+const menuItemsAdmin = [
+  {
+    title: 'Campanhas',
+    icon: <Megaphone className="h-5 w-5" />,
+    href: '/page/campanhas',
+  },
+  {
+    title: 'Informativos',
+    icon: <Info className="h-5 w-5" />,
+    href: '/page/informativos',
+  },
+  {
+    title: 'Open IA',
+    icon: <Brain className="h-5 w-5" />,
+    href: '/page/open-ia',
+  },
+  {
+    title: 'Integrações',
+    icon: <Link2 className="h-5 w-5" />,
+    href: '/page/integracoes',
+  },
+  {
+    title: 'Conexões',
+    icon: <Database className="h-5 w-5" />,
+    href: '/page/conexoes',
+  },
+  {
+    title: 'Lista de arquivos',
+    icon: <List className="h-5 w-5" />,
+    href: '/page/lista-de-arquivos',
+  },
+  {
+    title: 'Fila & Chatbot',
+    icon: <MessageSquare className="h-5 w-5" />,
+    href: '/page/fila-chatbot',
   },
   {
     title: 'Usuários',
-    icon: <Users className="h-5 w-5" />,
-    href: '/page/users',
-    role: 'admin'
+    icon: <UserCog className="h-5 w-5" />,
+    href: '/page/usuarios',
+  },
+  {
+    title: 'API',
+    icon: <Terminal className="h-5 w-5" />,
+    href: '/page/api',
+  },
+  {
+    title: 'Financeiro',
+    icon: <DollarSign className="h-5 w-5" />,
+    href: '/page/financeiro',
   },
   {
     title: 'Configurações',
     icon: <Settings className="h-5 w-5" />,
-    href: '/page/settings',
+    href: '/page/configuracoes',
   },
 ]
 
 interface MenuItemProps {
-  item: typeof menuItems[0]
+  item: typeof menuItemsGeral[0]
   onItemClick?: () => void
 }
 
@@ -49,15 +126,15 @@ const MenuItem = ({ item, onItemClick }: MenuItemProps) => {
   return (
     <Link
       href={item.href}
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ease-in-out text-sm
         ${isActive
-          ? 'bg-slate-200 text-slate-900'
-          : 'hover:bg-slate-200/50 text-slate-600 hover:text-slate-900'
+          ? 'bg-blue-500 text-white font-medium shadow-md'
+          : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
         }`}
       onClick={onItemClick}
     >
       {item.icon}
-      {item.title}
+      <span>{item.title}</span>
     </Link>
   )
 }
@@ -66,18 +143,22 @@ export function MenuItems({ onItemClick }: { onItemClick?: () => void }) {
   const { user } = useAuth()
 
   return (
-    <>
-      <div className="mb-4 px-3">
-        <p className="text-sm font-medium">Bem-vindo,</p>
-        <p className="text-sm text-slate-500">{user?.email}</p>
+    <div className="flex flex-col space-y-6">
+      <div className="space-y-1">
+        <h2 className="px-3 mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          {user?.role === 'admin' ? 'Administração' : 'Principal'}
+        </h2>
+        <nav className="space-y-1">
+          {user?.role === 'admin'
+            ? [...menuItemsGeral, ...menuItemsAdmin].map((item, index) => (
+              <MenuItem key={index} item={item} onItemClick={onItemClick} />
+            ))
+            : menuItemsGeral.map((item, index) => (
+              <MenuItem key={index} item={item} onItemClick={onItemClick} />
+            ))
+          }
+        </nav>
       </div>
-      <nav className="space-y-1">
-        {menuItems.map((item, index) => (
-          (!item.role || item.role === user?.role) && (
-            <MenuItem key={index} item={item} onItemClick={onItemClick} />
-          )
-        ))}
-      </nav>
-    </>
+    </div>
   )
-} 
+}
