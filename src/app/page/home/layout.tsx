@@ -2,11 +2,12 @@
 import SlideMenu from '@/app/components/SlideMenu';
 import { useAuth } from '@/app/context/authContext';
 import { redirect } from 'next/navigation'
-import { Bell, Menu, MessageSquareDot, Search } from 'lucide-react'
+import { Menu, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { NotificationsSheet } from '@/app/components/NotificationsSheet';
 
 export default function ProtectedLayout({
   children,
@@ -30,7 +31,6 @@ export default function ProtectedLayout({
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <SlideMenu isOpen={isOpen} onOpenChange={setIsOpen} />
       <div className="flex-1 lg:pl-[300px]">
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
           <div className="flex h-16 items-center justify-between px-6">
@@ -57,12 +57,58 @@ export default function ProtectedLayout({
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon" className="hover:bg-gray-100">
-                  <Bell className="h-5 w-5 text-gray-500" />
-                </Button>
-                <Button variant="ghost" size="icon" className="hover:bg-gray-100">
-                  <MessageSquareDot className="h-5 w-5 text-gray-500" />
-                </Button>
+                <NotificationsSheet
+                  variant="bell"
+                  notifications={[
+                    {
+                      id: 1,
+                      title: 'Informação',
+                      message: 'Aqui estão suas informações.',
+                      time: new Date().toLocaleTimeString(),
+                      read: false
+                    },
+                    {
+                      id: 2,
+                      title: 'Informação',
+                      message: 'Aqui estão suas informações.',
+                      time: new Date().toLocaleTimeString(),
+                      read: false
+                    },
+                    {
+                      id: 3,
+                      title: 'Informação',
+                      message: 'Aqui estão suas informações.',
+                      time: new Date().toLocaleTimeString(),
+                      read: false
+                    },
+                    {
+                      id: 4,
+                      title: 'Informação',
+                      message: 'Aqui estão suas informações.',
+                      time: new Date().toLocaleTimeString(),
+                      read: false
+                    },
+                    {
+                      id: 5,
+                      title: 'Informação',
+                      message: 'Aqui estão suas informações.',
+                      time: new Date().toLocaleTimeString(),
+                      read: false
+                    }
+                  ]}
+                />
+                <NotificationsSheet
+                  variant="message"
+                  notifications={[
+                    {
+                      id: 1,
+                      title: 'Informação',
+                      message: 'Aqui estão suas informações.',
+                      time: new Date().toLocaleTimeString(),
+                      read: false
+                    }
+                  ]}
+                />
               </div>
 
               <div className="h-8 w-px bg-gray-200" />
@@ -85,7 +131,8 @@ export default function ProtectedLayout({
 
         <main className="p-6">
           <div className="mx-auto max-w-7xl">
-            {children}
+            <SlideMenu isOpen={isOpen} onOpenChange={setIsOpen} />
+            <div className="mt-4">{children}</div>
           </div>
         </main>
       </div>

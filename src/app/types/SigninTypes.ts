@@ -2,7 +2,7 @@ import type { User } from "./User";
 
 export interface SignInFormData {
   email: string;
-  password: string;
+  senha: string;
 }
 
 export interface SigninTypes {

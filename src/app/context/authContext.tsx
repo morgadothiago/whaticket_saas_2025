@@ -1,10 +1,7 @@
 'use client'
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { SignInFormData, SigninTypes } from '@/app/types/SigninTypes';
 import api from '../services/api';
-import type { AxiosError } from 'axios';
-import { toast } from 'sonner';
 import type { User } from '../types/User';
 import type { AuthContextType } from '../types/AuthContextType';
 
@@ -16,21 +13,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (data: SignInFormData): Promise<SigninTypes | null> => {
     try {
-      const response = await api.post('/auth/login', data);
+      const response = await api.login(data.email, data.senha);
 
+      console.log("campos enviados -> ", data.email)
+      console.log("campos enviados -> ", data.senha)
 
-      console.log('response.data', response.data)
-      if (response?.data) {
-        saveUser(response.data.user);
-        saveToken(response.data.token);
-        setUser(response.data.user);
+      if ('message' in response) {
+        console.log("Aqui esta o ->", response.message)
+        return null;
+      }
 
+      if (response) {
+        saveUser(response.user);
+        saveToken(response.token);
+        setUser(response.user);
 
-        return response.data;
+        return response;
       }
       return null;
     } catch (error) {
-      toast.error('Credenciais inválidas');
+      console.log(error)
       return null;
     }
   };

@@ -1,7 +1,6 @@
 'use client'
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import React, { useState } from "react"
+import { useForm, SubmitHandler } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,51 +9,50 @@ import { useRouter } from 'next/navigation'
 import Link from "next/link"
 import { LogIn } from "lucide-react"
 import { toast } from "sonner"
+import type { SignInFormData } from "@/app/types/SigninTypes"
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Email inválido.",
-  }),
-  password: z.string().min(6, {
-    message: "Senha deve ter no mínimo 6 caracteres.",
-  }),
-})
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+import { Icons } from "@/components/ui/icons"
+
+
 
 export default function SignIn() {
-  const { login } = useAuth()
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const schema = yup.object().shape({
+    email: yup.string().email('Email inválido').required('Email é obrigatório'),
+    senha: yup.string().required('Senha é obrigatória')
   })
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await login(values)
-      router.push('/page/Home')
-      toast.success('Login realizado com sucesso', {
+
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<SignInFormData>({
+    resolver: yupResolver(schema)
+  })
+
+  const router = useRouter()
+  const { login } = useAuth()
+
+  const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
+    console.log("Aqui esta  ->", data)
+    const response = await login(data)
+
+    if (response) {
+      toast.success('Login realizado com sucesso!', {
+        description: 'Você está sendo redirecionado para a página inicial',
+        duration: 3000,
         position: 'top-right',
-        duration: 5000,
         richColors: true,
-        description: 'Você foi redirecionado para a página inicial',
-        icon: '🔑',
-
-
       })
-    } catch (error) {
-      console.error(error)
-      toast.error('Erro ao realizar login. Tente novamente.', {
+      router.push('/page/home')
+    } else {
+      toast.error('Erro ao fazer login', {
+        description: 'Verifique suas credenciais e tente novamente',
+        duration: 3000,
         position: 'top-right',
-        duration: 5000,
         richColors: true,
-        icon: '❌',
       })
     }
   }
-
   return (
     <div className="min-h-screen flex flex-col justify-center bg-gray-50">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -73,7 +71,7 @@ export default function SignIn() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
@@ -83,12 +81,12 @@ export default function SignIn() {
                   id="email"
                   type="email"
                   placeholder="seu@email.com"
-                  {...form.register("email")}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  {...register("email")}
+                  className={`appearance-none block w-full px-3 py-2 border ${errors.email ? 'border-red-600' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 />
-                {form.formState.errors.email && (
+                {errors.email && (
                   <p className="mt-1 text-sm text-red-600">
-                    {form.formState.errors.email.message}
+                    {errors.email.message}
                   </p>
                 )}
               </div>
@@ -103,12 +101,12 @@ export default function SignIn() {
                   id="password"
                   type="password"
                   placeholder="••••••"
-                  {...form.register("password")}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  {...register("senha")}
+                  className={`appearance-none block w-full px-3 py-2 border ${errors.senha ? 'border-red-600' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 />
-                {form.formState.errors.password && (
+                {errors.senha && (
                   <p className="mt-1 text-sm text-red-600">
-                    {form.formState.errors.password.message}
+                    {errors.senha.message}
                   </p>
                 )}
               </div>
@@ -127,10 +125,14 @@ export default function SignIn() {
 
             <div>
               <Button
+                className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-500 transition-colors"
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                disabled={isLoading || !watch('email') || !watch('senha')}
               >
-                Entrar
+                {isLoading && (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {isLoading ? 'Entrando...' : 'Entrar'}
               </Button>
             </div>
           </form>
