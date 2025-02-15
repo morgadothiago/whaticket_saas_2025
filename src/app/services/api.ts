@@ -14,8 +14,9 @@ class ApiService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: 'https://whatsapp-atendimento.onrender.com/',
+      baseURL: process.env.API_HOST,
     });
+    console.log(process.env.API_HOST)
   }
 
   async login(email: string, senha: string) {

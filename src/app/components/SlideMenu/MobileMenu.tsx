@@ -34,7 +34,7 @@ export function MobileMenu({ isOpen, onOpenChange }: MobileMenuProps) {
               <Icons.logo className="h-8 w-8 text-blue-600" />
               <div>
                 <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-                  {user?.Empresa?.toString() || 'Dashboard'}
+                  {user?.Empresa.nome}
                 </span>
                 <p className="text-xs text-gray-500 mt-0.5">Gerenciamento completo</p>
               </div>
