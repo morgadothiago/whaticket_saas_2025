@@ -14,7 +14,7 @@ class ApiService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: process.env.API_HOST,
+      baseURL: "https://whatsapp-atendimento.onrender.com/",
     });
     console.log(process.env.API_HOST)
   }
